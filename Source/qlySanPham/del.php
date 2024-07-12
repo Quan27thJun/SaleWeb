@@ -4,5 +4,5 @@ if (isset($_GET["id"])) {
     $sql = "UPDATE sanpham SET BiXoa = 1 WHERE MaSanPham = '$id'";
     $result = mysqli_query($connection, $sql);
 }
-ChangeURL("../Source/qlySanPham");
+ChangeURL("../qlySanPham");
 ?>

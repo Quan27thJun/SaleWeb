@@ -7,36 +7,32 @@ if (isset($_SESSION['username']) && $_SESSION['username']){
     //Xử lý đăng nhập
     if (isset($_POST['dangnhap'])) 
     {
-        // Lấy dữ liệu nhập vào
-        $username = $_POST['TenDangNhap'];
-        $password = $_POST['MatKhau'];
-
-        // Chuẩn bị câu lệnh SQL
-        $stmt = $connection->prepare("SELECT TenDangNhap, MatKhau FROM taikhoan WHERE TenDangNhap=?");
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        // Kiểm tra kết quả trả về
-        if ($result->num_rows == 0) 
-        {
-            echo "Tên đăng nhập này không tồn tại. Vui lòng kiểm tra lại. <a href='javascript: history.go(-1)'>Trở lại</a>";
+        
+        //Lấy dữ liệu nhập vào, addslashes thêm gạch chéo ngược \\\\\ vào trước các kí tự đặc biệt như dấu nháy đơn
+        $username = addslashes($_POST['TenDangNhap']);
+        $password = addslashes($_POST['MatKhau']);
+        //Kiểm tra tên đăng nhập có tồn tại không
+        $sql = "SELECT TenDangNhap, MatKhau FROM taikhoan WHERE TenDangNhap='$username'";
+        $query = mysqli_query($connection, $sql);
+        if ($query == NULL) 
+        {        echo "Tên đăng nhập này không tồn tại. Vui lòng kiểm tra lại. <a href='javascript: history.go(-1)'>Trở lại</a>";
             exit;
         }
-
-        // Lấy mật khẩu trong database ra
-        $row = $result->fetch_assoc();
-
-        // So sánh 2 mật khẩu có trùng khớp hay không
+        
+        //Lấy mật khẩu trong database ra
+        $row = mysqli_fetch_array($query);
+        
+        //So sánh 2 mật khẩu có trùng khớp hay không
         if ($password != $row['MatKhau']) {
             echo "Mật khẩu không đúng. Vui lòng nhập lại. <a href='javascript: history.go(-1)'>Trở lại</a>";
             exit;
         }
-        // Lưu tên đăng nhập
+        
+        //Lưu tên đăng nhập
         $_SESSION['username'] = $username;
         ChangeURL("../Source/index.php");
+        
     }
-
 ?>
 <div id="vien"><div class="center"><div id="ban"><a id="ba" href="/index.php">Trang chủ</a> > <font color="#008744">Đăng nhập tài khoản</font>
 </div></div></div>
